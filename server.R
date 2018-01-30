@@ -6,7 +6,7 @@ library(gplots)
 shinyServer(function(input, output,session) {
 
     bs <- reactive({ 
-    		req(input$fileACP)
+    		req(input$fileACP) #ACP 
             inFile <- input$fileACP
             data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
             describe(data)[2:13]

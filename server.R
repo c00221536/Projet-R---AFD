@@ -5,8 +5,8 @@ library(gplots)
 
 shinyServer(function(input, output,session) {
 
-    bs <- reactive({ 
-    		req(input$fileACP) #ACP 
+    bs <- reactive({ #Info statistique classique 
+    		req(input$fileACP) 
             inFile <- input$fileACP
             data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
             describe(data)[2:13]
@@ -15,7 +15,7 @@ shinyServer(function(input, output,session) {
         bs()
     })
 
-    correl <- reactive({
+    correl <- reactive({ #Information correlation 
     		req(input$fileACP)
             inFile <- input$fileACP
             x <- read.csv(inFile$datapath, header= input$header, sep=input$sep,dec=".",fileEncoding = "UTF-8-BOM")
@@ -26,7 +26,7 @@ shinyServer(function(input, output,session) {
         correl()
     })
     
-    pcaresult <- reactive({
+    pcaresult <- reactive({ #Data ACP
     		req(input$fileACP)
             inFile <- input$fileACP
             dat <- read.csv(inFile$datapath, header= input$header, sep=input$sep,fileEncoding = "UTF-8-BOM")
@@ -239,12 +239,12 @@ shinyServer(function(input, output,session) {
 
   output$list_item1<-renderUI({  #Affichage des noms des colonnes X en fonction du CSV
     f<-toto()
-    yolo2 <-selectInput("xcol","X Var",choices = as.list(colnames(f)))
+    selectInput("xcol","X Var",choices = as.list(colnames(f)))
   })
 
     output$list_item2<-renderUI({ #Y colonne show en fonction du CSV
     	f<-toto()
-   	yolo1 <-selectInput("ycol","Y var",choices = as.list(colnames(f)))
+   	selectInput("ycol","Y var",choices = as.list(colnames(f)))
   })
 
 selectedData <- reactive({ #Selection des X et Y en fonction de l'User

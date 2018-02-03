@@ -1,200 +1,93 @@
 library(shiny)
 library(shinyAce)
 library(psych)
+library(factoextra)
 library(gplots)
+library(FactoMineR)
+library(corrplot)
 
 shinyServer(function(input, output,session) {
 
-    bs <- reactive({ #Info statistique classique 
-    		req(input$fileACP) 
+    screePlo <- function(){ 
+            req(input$fileACP) #ACP 
             inFile <- input$fileACP
             data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
-            describe(data)[2:13]
-    })
-        output$textarea.out <- renderPrint({
-        bs()
+
+            data.active <- data[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
+            res.pca <- PCA(data.active, graph = FALSE)
+            eig.val <- get_eigenvalue(res.pca) #VALEUR PROPRE VARIANCE
+            (fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))) #PLOT
+    }       
+        output$screePlot <- renderPlot({
+        print(screePlo())
     })
 
-    correl <- reactive({ #Information correlation 
-    		req(input$fileACP)
+    variance <- function(){ 
+            req(input$fileACP) #ACP 
             inFile <- input$fileACP
-            x <- read.csv(inFile$datapath, header= input$header, sep=input$sep,dec=".",fileEncoding = "UTF-8-BOM")
-            x <- x[-1, -1]
-            round(cor(cbind(x), use = "complete"),3)
-    })
-        output$correl.out <- renderPrint({
-        correl()
-    })
-    
-    pcaresult <- reactive({ #Data ACP
-    		req(input$fileACP)
+            data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
+
+            data.active <- data[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
+            res.pca <- PCA(data.active, graph = FALSE)
+            eig.val <- get_eigenvalue(res.pca) #VALEUR PROPRE VARIANCE
+            (fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))) #PLOT scree plot
+    }  
+        output$var.out <- renderPrint({
+        print(variance())
+    })  
+    variablePCA <- function(){ 
+            req(input$fileACP) #ACP 
             inFile <- input$fileACP
-            dat <- read.csv(inFile$datapath, header= input$header, sep=input$sep,fileEncoding = "UTF-8-BOM")
-        rowvar <- matrix(dat[,1])
-        rownames(dat) <- rowvar
-        datpca <- as.matrix(dat[,-1])
-        colvar <- colnames(datpca)
-        nr <- nrow(datpca)
-        nc <- ncol(datpca)
-        maxpc <- min(nr,nc)
-        respca <- prcomp(datpca, scale=TRUE)
-        info <- summary(respca)
-        eigen <- info[[1]]^2
-        newinfo <- rbind("Eigen values"=eigen, info$importance)
-        cat("Importance of components:", "\n")
-        print(newinfo)
+            data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
+
+            data.active <- data[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
+            res.pca <- PCA(data.active, graph = FALSE)
+            fviz_pca_var(res.pca, col.var = "black") #Graphe variable PCA
+    }       
+        output$varPCA.out <- renderPlot({
+        print(variablePCA())
+    })
+    grapheRondCos <- function(){ 
+            req(input$fileACP) #ACP 
+            inFile <- input$fileACP
+            data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
+
+            data.active <- data[input$idInv:input$idInv2 , input$idActive:input$idActive2]
+            res.pca <- PCA(data.active, graph = FALSE)
+            corrplot(var$cos2, is.corr=FALSE) #Tableau Correlation cercle
+    }       
+        output$grapheCos2.out <- renderPlot({
+        print(grapheRondCos())
+    })
+    cercleColorCos <- function(){ 
+            req(input$fileACP) #ACP 
+            inFile <- input$fileACP
+            data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
+
+            data.active <- data[input$idInv:input$idInv2 , input$idActive:input$idActive2]
+            res.pca <- PCA(data.active, graph = FALSE)
+fviz_pca_var(res.pca, col.var = "contrib", #Graphe en cercle en fonction du cos2
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07")
+             )
+    }       
+        output$CercleCos2.out <- renderPlot({
+        print(cercleColorCos())
+    })
+    grapheIndivi <- function(){ 
+            req(input$fileACP) #ACP 
+            inFile <- input$fileACP
+            data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
             
-        pcloadings <- t(respca$sdev*t(respca$rotation))
-        cat("\n", "Principal component loadings:", "\n")
-        print(pcloadings)
-            
-        pcscores<-scale(datpca)%*%respca$rotation*sqrt(nr/(nr-1))
-        cat("\n", "Principal component scores:", "\n")
-        print(pcscores)
+            data.active <- data[input$idInv:input$idInv2 , input$idActive:input$idActive2]
+            res.pca <- PCA(data.active, graph = FALSE)
+        fviz_pca_ind (res.pca, col.ind = "cos2", #Graphe des individus colorer
+                     gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+                     repel = TRUE # Évite le chevauchement de texte
+                     )
+    }       
+        output$grapheIndivi.out <- renderPlot({
+        print(grapheIndivi())
     })
-            output$pcaresult.out <- renderPrint({
-            pcaresult()
-    })
-
-     graph1 <- function() {
-     		req(input$fileACP)
-            inFile <- input$fileACP
-            dat <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
-            #dat <- read.csv(text=input$text, sep="\t")
-            rowvar <- matrix(dat[,1])
-            rownames(dat) <- rowvar
-            datpca <- as.matrix(dat[,-1])
-            colvar <- colnames(datpca)
-            nr <- nrow(datpca)
-            nc <- ncol(datpca)
-            maxpc <- min(nr,nc)
-            respca <- prcomp(datpca, scale=TRUE)
-            pcloadings <- t(respca$sdev*t(respca$rotation))
-            pcscores<-scale(datpca)%*%respca$rotation*sqrt(nr/(nr-1))
-        
-
-        plot(pcloadings[,1:2], type="n", xlab="PC 1", ylab="PC 2", cex.axis=0.8, cex.lab=0.8)
-        text(pcloadings[,1:2], labels=colvar, cex=0.9, adj=c(0.25,1.5))
-        abline(h=0,lty="dotted")
-        abline(v=0,lty="dotted")
-        title(main="Principal Component Analysis: PC Loadings")
-    }
-    
-    output$contentsGraph1 <- renderPlot({
-        print(graph1())
-    })
-    
-    
-    
-    graph2 <- function() {
-    		req(input$fileACP)
-            inFile <- input$fileACP
-            dat <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
-            #dat <- read.csv(text=input$text, sep="\t")
-            rowvar <- matrix(dat[,1])
-            rownames(dat) <- rowvar
-            datpca <- as.matrix(dat[,-1])
-            colvar <- colnames(datpca)
-            nr <- nrow(datpca)
-            nc <- ncol(datpca)
-            maxpc <- min(nr,nc)
-            respca <- prcomp(datpca, scale=TRUE)
-            pcloadings <- t(respca$sdev*t(respca$rotation))
-            pcscores<-scale(datpca)%*%respca$rotation*sqrt(nr/(nr-1))
-        
-
-        PCSpc1min <- min(pcscores[,1:2][,1])
-        PCSpc1min <- PCSpc1min-(abs(PCSpc1min-PCSpc1min*1.25))
-        PCSpc1max <- max(pcscores[,1:2][,1])
-        PCSpc1max <- PCSpc1max*1.25
-
-        PCSpc2min <- min(pcscores[,1:2][,2])
-        PCSpc2min <- PCSpc2min-(abs(PCSpc2min-PCSpc2min*1.25))
-        PCSpc2max <- max(pcscores[,1:2][,2])
-        PCSpc2max <- PCSpc2max*1.25
-        
-        plot(pcscores[,1:2], xlab="PC 1", ylab="PC 2", type="n", xlim=c(PCSpc1min, PCSpc1max), ylim=c(PCSpc2min, PCSpc2max), cex.axis=0.8,cex.lab=0.8)
-
-        text(pcscores[,1:2], labels=rowvar, cex=0.9, adj=c(0.25,1.5))
-        abline(h=0,lty="dotted")
-        abline(v=0,lty="dotted")
-        title(main="Principal Component Analysis: PC Scores")
-    }
-    
-    
-    output$contentGraph2 <- renderPlot({
-        print(graph2())
-    })
-    
-    
-    
-    graph3 <- function() {
-    		req(input$fileACP)
-            inFile <- input$fileACP
-            dat <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
-            #dat <- read.csv(text=input$text, sep="\t")
-            rowvar <- matrix(dat[,1])
-            rownames(dat) <- rowvar
-            datpca <- as.matrix(dat[,-1])
-            colvar <- colnames(datpca)
-            nr <- nrow(datpca)
-            nc <- ncol(datpca)
-            maxpc <- min(nr,nc)
-            respca <- prcomp(datpca, scale=TRUE)
-            pcloadings <- t(respca$sdev*t(respca$rotation))
-            pcscores<-scale(datpca)%*%respca$rotation*sqrt(nr/(nr-1))
-        
-        pc1min <- min(c(pcloadings[,1:2][,1], pcscores[,1:2][,1]))
-        pc1min <- pc1min*1.25
-        pc1max <- max(c(pcloadings[,1:2][,1], pcscores[,1:2][,1]))
-        pc1max <- pc1max*1.25
-
-        pc2min <- min(c(pcloadings[,1:2][,2], pcscores[,1:2][,2]))
-        pc2min <- pc2min*1.25
-        pc2max <- max(c(pcloadings[,1:2][,2], pcscores[,1:2][,2]))
-        pc2max <- pc2max*1.25
-        
-
-        biplot(pcscores[,1:2], pcloadings[,1:2], var.axes = F, xlim=c(pc1min, pc1max), ylim=c(pc2min, pc2max))
-        abline(v=0, lty=3) 
-        abline(h=0, lty=3) 
-    }
-    
-    
-    output$contenGraph3 <- renderPlot({
-        print(graph3())
-    })
-
-    makePlot5 <- function() {
-    		req(input$fileACP)
-            inFile <- input$fileACP
-            dat <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
-            rowvar <- matrix(dat[,1])
-            rownames(dat) <- rowvar
-            datpca <- as.matrix(dat[,-1])
-            colvar <- colnames(datpca)
-            nr <- nrow(datpca)
-            nc <- ncol(datpca)
-            maxpc <- min(nr,nc)
-            respca <- prcomp(datpca, scale=TRUE)
-            pcloadings <- t(respca$sdev*t(respca$rotation))
-            pcscores<-scale(datpca)%*%respca$rotation*sqrt(nr/(nr-1))
-        
-        dat$PCA1 <- pcscores[,1]
-        dat$PCA2 <- pcscores[,2]
-        
-        z <- dat[, c("PCA1","PCA2")]
-        z.d <- dist(z)^2  
-        result <- hclust(z.d, method="ward.D2") 
-        par(mar=c(1,6,3,1))
-        plot(result, xlab="", sub="") 
-    }
-    
-    
-    output$pcPlot5 <- renderPlot({
-        print(makePlot5())
-    })
-
     #CAH
 
      ward <- function(){ 
@@ -239,12 +132,12 @@ shinyServer(function(input, output,session) {
 
   output$list_item1<-renderUI({  #Affichage des noms des colonnes X en fonction du CSV
     f<-toto()
-    selectInput("xcol","X Var",choices = as.list(colnames(f)))
+    yolo2 <-selectInput("xcol","X Var",choices = as.list(colnames(f)))
   })
 
     output$list_item2<-renderUI({ #Y colonne show en fonction du CSV
     	f<-toto()
-   	selectInput("ycol","Y var",choices = as.list(colnames(f)))
+   	yolo1 <-selectInput("ycol","Y var",choices = as.list(colnames(f)))
   })
 
 selectedData <- reactive({ #Selection des X et Y en fonction de l'User
@@ -277,5 +170,17 @@ selectedData <- reactive({ #Selection des X et Y en fonction de l'User
          pch = 20, cex = 3)
     points(clusters()$centers, pch = 4, cex = 4, lwd = 4)
   })
+
+#AFC
+output$tata <- reactive({
+   		req(input$fileAFC)
+        inFile <- input$fileAFC
+        dat <- read.csv(inFile$datapath, header= TRUE,sep=";",dec=".", fileEncoding = "UTF-8-BOM")
+        #Convertion données en tab
+        dt <- as.table(as.matrix(dat))
+        #Graph
+        t1 <- balloonplot(t (dt), main = "housetasks", xlab = "", ylab = "",
+            label = FALSE, show.margins = FALSE)
+	})
 
 })

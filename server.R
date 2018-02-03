@@ -85,7 +85,7 @@ fviz_pca_var(res.pca, col.var = "contrib", #Graphe en cercle en fonction du cos2
                      repel = TRUE # Évite le chevauchement de texte
                      )
     }       
-        output$grapheIndivi.out <- renderPlot({
+        output$grapheIndivi.out <- renderPlot({ #test
         print(grapheIndivi())
     })
     #CAH

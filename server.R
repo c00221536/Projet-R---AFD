@@ -8,32 +8,47 @@ library(corrplot)
 
 shinyServer(function(input, output,session) {
 
-    screePlo <- function(){ 
+    variance <- reactive({ 
             req(input$fileACP) #ACP 
             inFile <- input$fileACP
             data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
 
             data.active <- data[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
+            
+            #data.active <- data[2,23,2:10]
+
             res.pca <- PCA(data.active, graph = FALSE)
             eig.val <- get_eigenvalue(res.pca) #VALEUR PROPRE VARIANCE
-            (fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))) #PLOT
-    }       
-        output$screePlot <- renderPlot({
-        print(screePlo())
+            print(eig.val)
+            #(fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))) #PLOT
+    })       
+        output$var.out <- renderPrint({
+        variance()
     })
 
-    variance <- function(){ 
+    correlation <- reactive({
+            req(input$fileACP) #ACP 
+            inFile <- input$fileACP
+            data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
+            data.active <- data[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
+            res.pca <- PCA(data.active, graph = FALSE)
+			print(var$cos2)
+    })
+    output$correl.out <- renderPrint({
+        correlation()
+    })
+    screePlo <- reactive({ 
             req(input$fileACP) #ACP 
             inFile <- input$fileACP
             data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
 
             data.active <- data[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
             res.pca <- PCA(data.active, graph = FALSE)
-            eig.val <- get_eigenvalue(res.pca) #VALEUR PROPRE VARIANCE
+            #eig.val <- get_eigenvalue(res.pca) #VALEUR PROPRE VARIANCE
             (fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))) #PLOT scree plot
-    }  
-        output$var.out <- renderPrint({
-        print(variance())
+    })  
+        output$screePlot <- renderPlot({
+        screePlo()
     })  
     variablePCA <- function(){ 
             req(input$fileACP) #ACP 
@@ -66,7 +81,7 @@ shinyServer(function(input, output,session) {
 
             data.active <- data[input$idInv:input$idInv2 , input$idActive:input$idActive2]
             res.pca <- PCA(data.active, graph = FALSE)
-fviz_pca_var(res.pca, col.var = "contrib", #Graphe en cercle en fonction du cos2
+			fviz_pca_var(res.pca, col.var = "contrib", #Graphe en cercle en fonction du cos2
              gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07")
              )
     }       
@@ -91,31 +106,20 @@ fviz_pca_var(res.pca, col.var = "contrib", #Graphe en cercle en fonction du cos2
     #CAH
 
      ward <- function(){ 
-   		req(input$fileCAH)
+     req(input$fileCAH)
         inFile <- input$fileCAH
         dat <- read.csv(inFile$datapath, header= TRUE,sep=";",dec=".", fileEncoding = "UTF-8-BOM")
-            rowvar <- matrix(dat[,1])
-            rownames(dat) <- rowvar
-            datpca <- as.matrix(dat[,-1])
-            colvar <- colnames(datpca)
-            nr <- nrow(datpca)
-            nc <- ncol(datpca)
-            maxpc <- min(nr,nc)
-            respca <- prcomp(datpca, scale=TRUE)
-            pcloadings <- t(respca$sdev*t(respca$rotation))
-            pcscores<-scale(datpca)%*%respca$rotation*sqrt(nr/(nr-1))
-        
-        dat$PCA1 <- pcscores[,1]
-        dat$PCA2 <- pcscores[,2]
-        
-        z <- dat[, c("PCA1","PCA2")]
-        z.d <- dist(z)^2  
-        result <- hclust(z.d, method="ward.D2")  #Classification Ward 
-        par(mar=c(1,6,3,1))
-        plot(result, xlab="", sub="") 
+        nbClustV<- input$nbCluster #NbCluster définit par User sliderInput
 
-        rect.hclust(result, input$nbCluster) #Groupe via nbCluster User
-        groupes.result<- cutree(result, input$nbCluster)
+        dat.cr<-as.matrix(dat)  #Code pour réaliser clustering 
+        dat.dist <-dist(dat.cr)
+        cah.fin <-hclust(dat.dist, method="ward.D2")
+
+        plot(cah.fin, xlab="", sub="")
+        rect.hclust(cah.fin,nbClustV) #Définition des groupes 
+        groupes.result<-cutree(cah.fin, nbClustV)
+        (sort(groupes.result))
+
 
     }
         output$cah.out <- renderPlot({

@@ -1,10 +1,9 @@
 library(shiny)
-library(shinyAce)
-library(psych)
 library(factoextra)
-library(gplots)
 library(FactoMineR)
 library(corrplot)
+library(gplots)
+library(psych)
 
 shinyServer(function(input, output,session) {
 

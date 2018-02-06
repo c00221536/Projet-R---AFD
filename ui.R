@@ -1,4 +1,5 @@
 library(shiny)
+library(shinyAce)
 library(gplots)
 
 
@@ -30,7 +31,6 @@ fluidPage(
                               numericInput("idActive", "Variable active:", 2, min = 1, max = 100),
                               numericInput("idActive2", "variable active:", 10, min = 1, max = 100)),
 	                            tags$hr(),
-	                      mainPanel(
                               h3('Variance / Valeur Propre'),
                               verbatimTextOutput('var.out'),
                               br(),
@@ -53,7 +53,7 @@ fluidPage(
                               plotOutput('grapheIndivi.out'),
                               tableOutput('contentsACP'),
 	                            htmlOutput('outputACP')
-                    	)),
+                    	),
 
                         tabPanel(title = 'AFC',
                              fileInput("fileAFC", "AFC",
@@ -76,13 +76,12 @@ fluidPage(
                                          ".csv")),
                              sliderInput("nbCluster",label = "Sélectionner le nombre de Cluster souhaité",
                               value = 4, min = 2, max = 10)),
-                        	mainPanel(
                              h3('Diagramme Ward '),
                              plotOutput('cah.out',height = "1000px"), #width="1500px"),
                              tags$hr(),
                              tableOutput('contentsCAH'),
                              htmlOutput('outputCAH')
-                        )),
+                        ),
                         tabPanel(title = 'Kmean',
                       		sidebarPanel(
                            			fileInput("fileK", "K",
@@ -101,10 +100,8 @@ fluidPage(
 	                        uiOutput("list_item1"), #SelectInput interactif
 	                        uiOutput("list_item2")  #Idem
                         ),
-                      	mainPanel(
                         plotOutput('kmeanGraphe') #Output graphe 
-                          )
-                      	)
+                          ) 
                      )))
   
 

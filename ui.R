@@ -66,6 +66,7 @@ fluidPage(
 
                         tabPanel(title = 'CAH',
                         	sidebarPanel(
+                        		checkboxInput("texteCAH", "Texte", TRUE),
                             	fileInput("fileCAH", "CAH",
                                        accept = c(
                                          "text/csv",
@@ -73,11 +74,12 @@ fluidPage(
                                          ".csv")),
                              sliderInput("nbCluster",label = "Sélectionner le nombre de Cluster souhaité",
                               value = 4, min = 2, max = 10)),
+                        	mainPanel(
                              h3('Diagramme Ward '),
                              plotOutput('cah.out',height = "1000px"), #width="1500px"),
                              tags$hr(),
                              tableOutput('contentsCAH'),
-                             htmlOutput('outputCAH')
+                             htmlOutput('outputCAH'))
                         ),
                         tabPanel(title = 'Kmean',
                       		sidebarPanel(
@@ -97,8 +99,10 @@ fluidPage(
 	                        uiOutput("list_item1"), #SelectInput interactif
 	                        uiOutput("list_item2")  #Idem
                         ),
-                        plotOutput('kmeanGraphe') #Output graphe 
-                          ) 
+                      	mainPanel(
+							plotOutput('kmeanGraphe') #Output graphe 
+                          )
+                      	)
                      )))
   
 

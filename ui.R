@@ -1,4 +1,5 @@
 library(shiny)
+library(shinyAce)
 library(gplots)
 
 
@@ -30,35 +31,34 @@ fluidPage(
                               numericInput("idActive", "Plage Variable active début:", 2, min = 1, max = 100),
                               numericInput("idActive2", "Plage variable active fin:", 10, min = 1, max = 100)),
 	                            tags$hr(),
-		                      mainPanel(
-	                              h3('Variance / Valeur Propre'),
-	                              verbatimTextOutput('var.out'),
-	                              br(),
-	                              h3('Correlation'),
-	                              verbatimTextOutput('correl.out'),
-	                              br(),
-	                              h3('Graphe Plot'),
-	                              plotOutput('screePlot'),
-	                              br(),
-	                              h3('Varialbe PCA'),
-	                              plotOutput('varPCA.out'),
-	                              br(),
-	                              h3('Graphe rond cos2'),
-	                              plotOutput('grapheCos2.out'),
-	                              br(),
-	                              h3('Coloration de cercle en fonction de Cos2'),
-	                              plotOutput('CercleCos2.out'),
-	                              br(),
-	                              h3('Graphe invidualité'),
-	                              plotOutput('grapheIndivi.out'),
-	                              br(),
-	                              plotOutput('grapheContriDim.out'),
-	                              br(),
-	                              tableOutput('contentsACP'),
-		                            htmlOutput('outputACP')
-	                    	)
+		                      	mainPanel(
+		                              h3('Variance / Valeur Propre'),
+		                              verbatimTextOutput('var.out'),
+		                              br(),
+		                              h3('Correlation'),
+		                              verbatimTextOutput('correl.out'),
+		                              br(),
+		                              h3('Graphe Plot'),
+		                              plotOutput('screePlot'),
+		                              br(),
+		                              h3('Varialbe PCA'),
+		                              plotOutput('varPCA.out'),
+		                              br(),
+		                              h3('Graphe rond cos2'),
+		                              plotOutput('grapheCos2.out'),
+		                              br(),
+		                              h3('Coloration de cercle en fonction de Cos2'),
+		                              plotOutput('CercleCos2.out'),
+		                              br(),
+		                              h3('Graphe invidualité'),
+		                              plotOutput('grapheIndivi.out'),
+		                              br(),
+		                              plotOutput('grapheContriDim.out'),
+		                              br(),
+		                              tableOutput('contentsACP'),
+			                            htmlOutput('outputACP')
+	                    		)
 	                    ),
-
                         tabPanel(title = 'AFC',
                         	sidebarPanel(
                         		checkboxInput("Colonne", "Colonne", TRUE),
@@ -95,13 +95,12 @@ fluidPage(
                                          ".csv")),
                              sliderInput("nbCluster",label = "Sélectionner le nombre de Cluster souhaité",
                               value = 4, min = 2, max = 10)),
-                        	mainPanel(
                              h3('Diagramme Ward '),
                              plotOutput('cah.out',height = "1000px"), #width="1500px"),
                              tags$hr(),
                              tableOutput('contentsCAH'),
                              htmlOutput('outputCAH')
-                        )),
+                        ),
                         tabPanel(title = 'Kmean',
                       		sidebarPanel(
                            			fileInput("fileK", "K",
@@ -120,10 +119,8 @@ fluidPage(
 	                        uiOutput("list_item1"), #SelectInput interactif
 	                        uiOutput("list_item2")  #Idem
                         ),
-                      	mainPanel(
                         plotOutput('kmeanGraphe') #Output graphe 
-                          )
-                      	)
+                          ) 
                      )))
   
 

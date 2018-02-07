@@ -25,7 +25,6 @@ shinyServer(function(input, output,session) {
         output$var.out <- renderPrint({
         variance()
     })
-
     correlation <- reactive({
         req(input$fileACP) #ACP 
         inFile <- input$fileACP
@@ -70,6 +69,7 @@ shinyServer(function(input, output,session) {
         
     grapheRondCos <- function(){ 
         req(input$fileACP) #ACP 
+        ## AFFICHE MAUVAISE VALEUR PROBLEME AVEC VAR£COS2 ####
         inFile <- input$fileACP
         donnees <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
         donnees.active <- donnees[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
@@ -84,7 +84,6 @@ shinyServer(function(input, output,session) {
     })
         
     cercleColorCos <- function(){ 
-<<<<<<< HEAD
         req(input$fileACP) #ACP 
         inFile <- input$fileACP
         donnees <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
@@ -93,48 +92,39 @@ shinyServer(function(input, output,session) {
 			  
         fviz_pca_var(res.pca, col.var = "contrib", #Graphe en cercle en fonction du cos2
         gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
-=======
-            req(input$fileACP) #ACP 
-            inFile <- input$fileACP
-            data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
-
-            data.active <- data[input$idInv:input$idInv2 , input$idActive:input$idActive2]
-            res.pca <- PCA(data.active, graph = FALSE)
-            fviz_pca_var(res.pca, col.var = "contrib", #Graphe en cercle en fonction du cos2
-             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07")
-             )
->>>>>>> Dav
     }       
         output$CercleCos2.out <- renderPlot({
         print(cercleColorCos())
     })
         
     grapheIndivi <- function(){ 
-<<<<<<< HEAD
         req(input$fileACP) #ACP 
         inFile <- input$fileACP
-        donnees <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
-        rowvar <- matrix(donnees[,1]) #Récupération des noms 
-        rownames(dat) <- rowvar #Remplacement des ID créer par R par les noms 
-        donnees.active <- dat[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
-        res.pca <- PCA(donnees.active, graph = FALSE)
-        
-        fviz_pca_ind (res.pca, col.ind = "cos2", #Graphe des individus colorer
-        gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
-        repel = TRUE) # Évite le chevauchement de texte
-=======
-            req(input$fileACP) #ACP 
-            inFile <- input$fileACP
-            data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
-            rowvar <- matrix(dat[,1]) #Récupération des noms 
-            rownames(dat) <- rowvar #Remplacement des ID créer par R par les noms 
-            data.active <- data[input$idInv:input$idInv2 , input$idActive:input$idActive2]
-            res.pca <- PCA(data.active, graph = FALSE)
-            fviz_pca_ind (res.pca, col.ind = "cos2", #Graphe des individus colorer
-                     gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
-                     repel = TRUE # Évite le chevauchement de texte
-                     )
->>>>>>> Dav
+        dat <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
+
+            if (input$valeurG == TRUE){
+                rowvar <- matrix(dat[,1]) #Récupération des noms 
+                rownames(dat) <- rowvar #Remplacement des ID créer par R par les noms 
+                data.active <- dat[input$idInv:input$idInv2 , input$idActive:input$idActive2] #LES VALEURS ONT UN NOM ASSOCIE
+                print(data.active)
+                res.pca <- PCA(data.active, graph = FALSE)
+                fviz_pca_ind (res.pca, col.ind = "cos2", #Graphe des individus colorer
+                         gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+                         repel = TRUE # Évite le chevauchement de texte
+                         )
+            } 
+            else 
+            {
+                #rowvar <- matrix(dat[,1]) #Récupération des noms 
+                #rownames(dat) <- rowvar #Remplacement des ID créer par R par les noms   
+                data.active <- dat[input$idInv:input$idInv2 , input$idActive:input$idActive2] ### DANNS LE CAS DE NON NOM AU VALEURS
+                print(data.active)
+                res.pca <- PCA(data.active, graph = FALSE)
+                fviz_pca_ind (res.pca, col.ind = "cos2", #Graphe des individus colorer
+                         gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+                         repel = TRUE # Évite le chevauchement de texte
+                         )
+            }
     }       
         output$grapheIndivi.out <- renderPlot({ #test
         print(grapheIndivi())
@@ -163,24 +153,6 @@ shinyServer(function(input, output,session) {
         inFile <- input$fileCAH
         dat <- read.csv(inFile$datapath, header= TRUE,sep=";",dec=".", fileEncoding = "UTF-8-BOM")
         nbClustV<- input$nbCluster #NbCluster définit par User sliderInput / Création d'une variable non obligatoire
-<<<<<<< HEAD
-
-        rowvar <- matrix(dat[,1]) #Récupération des noms 
-        rownames(dat) <- rowvar #Remplacement des ID créer par R par les noms 
-
-        dat.cr<-as.matrix(dat)  #Code pour réaliser clustering 
-        dat.dist <-dist(dat.cr)
-        cah.fin <-hclust(dat.dist, method="ward.D2")
-        print(dat.cr)
-
-        plot(cah.fin, xlab="", sub="")
-        rect.hclust(cah.fin,nbClustV) #Définition des groupes 
-        groupes.result<-cutree(cah.fin, nbClustV)
-        (sort(groupes.result))
-
-
-    }
-=======
         
             if (input$texteCAH == TRUE) #Permet d'afficher le nom des variables SI checkbox TRUE 
             {
@@ -207,7 +179,6 @@ shinyServer(function(input, output,session) {
                 groupes.result<- cutree(result, input$nbCluster)
             }
         }
->>>>>>> Dav
         output$cah.out <- renderPlot({
         print(ward()) #Output graphe
         })

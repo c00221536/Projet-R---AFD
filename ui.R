@@ -26,6 +26,7 @@ fluidPage(
                                         "text/comma-separated-values,text/plain",
                                         ".csv")),
                               #PLAGE DE DONNEE SAISIE PAR UTILISATEUR POUR ACP 
+<<<<<<< HEAD
                               numericInput("idInv", "Plage Individu début:", 2, min = 1, max = 100),
                               numericInput("idInv2", "Plage Individu fin:", 10, min = 1, max = 100),
                               numericInput("idActive", "Plage Variable active début:", 2, min = 1, max = 100),
@@ -59,6 +60,38 @@ fluidPage(
 			                            htmlOutput('outputACP')
 	                    		)
 	                    ),
+=======
+                              numericInput("idInv", "Coordonée Individu (Début valeur ligne)", 1, min = 1, max = 100),
+                              numericInput("idInv2", "Coordonée Individu (Fin des valeur ligne:", 5, min = 1, max = 100),
+                              numericInput("idActive", "Variable active (Début numéro colonne):", 1, min = 1, max = 100),
+                              numericInput("idActive2", "variable active (Fin numéro colonne):", 5, min = 1, max = 100)),
+	                            tags$hr(),
+                              h3('Variance / Valeur Propre'),
+                              verbatimTextOutput('var.out'),
+                              br(),
+                              h3('Corrélation'),
+                              verbatimTextOutput('correl.out'),
+                              br(),
+                              h3('Graphe Plot'),
+                              plotOutput('screePlot.out'),
+                              br(),
+                              h3('Varialbe PCA'),
+                              plotOutput('varPCA.out'),
+                              br(),
+                              h3('Graphe rond cos2'),
+                              plotOutput('grapheCos2.out'),
+                              br(),
+                              h3('Coloration de cercle en fonction de Cos2'),
+                              plotOutput('CercleCos2.out'),
+                              br(),
+                              h3('Graphe invidualité'),
+							  checkboxInput("valeurG", "Valeur Individu", TRUE),
+                              plotOutput('grapheIndivi.out'),
+                              tableOutput('contentsACP'),
+	                            htmlOutput('outputACP')
+                    	),
+
+>>>>>>> Dav
                         tabPanel(title = 'AFC',
                         	sidebarPanel(
                         		checkboxInput("Colonne", "Colonne", TRUE),

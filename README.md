@@ -1,4 +1,4 @@
-# Application web sous : le package Shiny
+# Application web sous R : le package Shiny
 
 Antoine ANGOULVANT - David LUONG
 

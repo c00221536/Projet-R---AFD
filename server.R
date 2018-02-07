@@ -10,87 +10,128 @@ library(corrplot)
 shinyServer(function(input, output,session) {
 
     ##### ACP #####
-  
-    variance <- reactive({ 
-        req(input$fileACP) #ACP 
-        inFile <- input$fileACP
-        donnees <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
-        donnees.active <- donnees[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
-        res.pca <- PCA(donnees.active, graph = FALSE)
-        
-        eig.val <- get_eigenvalue(res.pca) #VALEUR PROPRE VARIANCE
-        print(eig.val)
-        #(fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))) #PLOT
-    })       
-        output$var.out <- renderPrint({
-        variance()
-    })
-    correlation <- reactive({
-        req(input$fileACP) #ACP 
-        inFile <- input$fileACP
-        donnees <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
-        donnees.active <- donnees[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
-        res.pca <- PCA(donnees.active, graph = FALSE)
-        
-        var <- get_pca_var(res.pca)
-			  
-        print(var$cor)
-    })
-        output$correl.out <- renderPrint({
-        correlation()
-    })
         
     screePlo <- reactive({ 
         req(input$fileACP) #ACP 
         inFile <- input$fileACP
         donnees <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
-        donnees.active <- donnees[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
-        res.pca <- PCA(donnees.active, graph = FALSE)
-        
-        #eig.val <- get_eigenvalue(res.pca) #VALEUR PROPRE VARIANCE
-        (fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))) #PLOT scree plot
-    })  
+                if(input$allFile == TRUE) 
+                {
+                    data.active <- donnees[,]
+                } else 
+                {
+                    data.active <- donnees[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
+                }
+
+            res.pca <- PCA(data.active, graph = FALSE)
+            eig.val <- get_eigenvalue(res.pca) #VALEUR PROPRE VARIANCE
+            (fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))) #PLOT
+    })       
         output$screePlot.out <- renderPlot({
         screePlo()
     })
-
-    variablePCA <- function(){ 
+        correlation <- reactive({
         req(input$fileACP) #ACP 
         inFile <- input$fileACP
         donnees <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
-        donnees.active <- donnees[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
+
+                if(input$allFile == TRUE) 
+                {
+                    donnees.active <- donnees[,]
+                } else 
+                {
+                    donnees.active <- donnees[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
+                }
+
         res.pca <- PCA(donnees.active, graph = FALSE)
         
-        fviz_pca_var(res.pca, col.var = "black") #Graphe variable PCA
+        var <- get_pca_var(res.pca)
+             
+        print(var$cor)
+     })
+     output$correl.out <- renderPrint({
+         correlation()
+     })
+    variance <- function(){ 
+            req(input$fileACP) #ACP 
+            inFile <- input$fileACP
+            data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
+
+                if(input$allFile == TRUE) 
+                {
+                    data.active <- data[,]
+                } else 
+                {
+                    data.active <- data[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
+                }
+
+            res.pca <- PCA(data.active, graph = FALSE)
+            eig.val <- get_eigenvalue(res.pca) #VALEUR PROPRE VARIANCE
+           # print(eig.val)
+    }  
+        output$var.out <- renderPrint({
+        print(variance())
+    })  
+    variablePCA <- function(){ 
+            req(input$fileACP) #ACP 
+            inFile <- input$fileACP
+            data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
+
+                if(input$allFile == TRUE) 
+                {
+                    data.active <- data[,]
+                } else 
+                {
+                    data.active <- data[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
+                }
+
+            res.pca <- PCA(data.active, graph = FALSE)
+            fviz_pca_var(res.pca, col.var = "black") #Graphe variable PCA
     }       
         output$varPCA.out <- renderPlot({
         print(variablePCA())
     })
         
-    grapheRondCos <- function(){ 
-        req(input$fileACP) #ACP 
-        inFile <- input$fileACP
-        donnees <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
-        donnees.active <- donnees[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
-        res.pca <- PCA(donnees.active, graph = FALSE)
-        
-        var <- get_pca_var(res.pca)
-        
-        corrplot(var$cos2, is.corr=FALSE) #Tableau Correlation cercle
-    }       
+    grapheRondCos <- function(){
+            req(input$fileACP) #ACP 
+            inFile <- input$fileACP
+            donnees <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
+
+                if(input$allFile == TRUE) 
+                {
+                    donnees.active <- donnees[,]
+                } else 
+                {
+                    donnees.active <- donnees[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
+                }
+
+            res.pca <- PCA(donnees.active, graph = FALSE)
+            
+            var <- get_pca_var(res.pca)
+            
+            corrplot(var$cos2, is.corr=FALSE) #Tableau Correlation cercle
+     }    
         output$grapheCos2.out <- renderPlot({
         print(grapheRondCos())
     })
         
     cercleColorCos <- function(){ 
-        req(input$fileACP) #ACP 
-        inFile <- input$fileACP
-        donnees <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
-        donnees.active <- donnees[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
-        res.pca <- PCA(donnees.active, graph = FALSE)
-			  
-        fviz_pca_var(res.pca, col.var = "contrib", #Graphe en cercle en fonction du cos2
-        gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+            req(input$fileACP) #ACP 
+            inFile <- input$fileACP
+            data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
+
+                if(input$allFile == TRUE) 
+                {
+                    data.active <- data[,]
+                } else 
+                {
+                    data.active <- data[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
+                }
+
+            res.pca <- PCA(data.active, graph = FALSE)
+            fviz_pca_var(res.pca, col.var = "contrib", #Graphe en cercle en fonction du cos2
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07")
+             )
     }       
         output$CercleCos2.out <- renderPlot({
         print(cercleColorCos())
@@ -104,7 +145,14 @@ shinyServer(function(input, output,session) {
             if (input$valeurG == TRUE){
                 rowvar <- matrix(dat[,1]) #Récupération des noms 
                 rownames(dat) <- rowvar #Remplacement des ID créer par R par les noms 
-                data.active <- dat[input$idInv:input$idInv2 , input$idActive:input$idActive2] #LES VALEURS ONT UN NOM ASSOCIE
+                    if(input$allFile == TRUE) 
+                    {
+                        data.active <- dat[,]
+                    } 
+                    else 
+                    {
+                        data.active <- dat[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
+                    }
                 print(data.active)
                 res.pca <- PCA(data.active, graph = FALSE)
                 fviz_pca_ind (res.pca, col.ind = "cos2", #Graphe des individus colorer
@@ -114,15 +162,19 @@ shinyServer(function(input, output,session) {
             } 
             else 
             {
-                #rowvar <- matrix(dat[,1]) #Récupération des noms 
-                #rownames(dat) <- rowvar #Remplacement des ID créer par R par les noms   
-                data.active <- dat[input$idInv:input$idInv2 , input$idActive:input$idActive2] ### DANNS LE CAS DE NON NOM AU VALEURS
+                    if(input$allFile == TRUE) 
+                    {
+                        data.active <- dat[,]
+                    } else 
+                    {
+                        data.active <- dat[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
+                    }
                 print(data.active)
                 res.pca <- PCA(data.active, graph = FALSE)
                 fviz_pca_ind (res.pca, col.ind = "cos2", #Graphe des individus colorer
-                         gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
-                         repel = TRUE # Évite le chevauchement de texte
-                         )
+                            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+                            repel = TRUE # Évite le chevauchement de texte
+                            )
             }
     }       
         output$grapheIndivi.out <- renderPlot({ #test

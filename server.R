@@ -18,10 +18,22 @@ shinyServer(function(input, output,session) {
             eig.val <- get_eigenvalue(res.pca) #VALEUR PROPRE VARIANCE
             (fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))) #PLOT
     }       
-        output$screePlot <- renderPlot({
-        print(screePlo())
+        output$screePlot.out <- renderPlot({
+        screePlo()
     })
+     correlation <- reactive({
 
+        ## AFFICHE MAUVAISE VALEUR #
+             req(input$fileACP) #ACP 
+             inFile <- input$fileACP
+             data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
+             data.active <- data[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
+             res.pca <- PCA(data.active, graph = FALSE)
+             print(var$cos2)
+     })
+     output$correl.out <- renderPrint({
+         correlation()
+     })
     variance <- function(){ 
             req(input$fileACP) #ACP 
             inFile <- input$fileACP
@@ -30,7 +42,7 @@ shinyServer(function(input, output,session) {
             data.active <- data[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
             res.pca <- PCA(data.active, graph = FALSE)
             eig.val <- get_eigenvalue(res.pca) #VALEUR PROPRE VARIANCE
-            (fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))) #PLOT scree plot
+           # print(eig.val)
     }  
         output$var.out <- renderPrint({
         print(variance())
@@ -49,6 +61,7 @@ shinyServer(function(input, output,session) {
     })
     grapheRondCos <- function(){ 
             req(input$fileACP) #ACP 
+            ## AFFICHE MAUVAISE VALEUR PROBLEME AVEC VAR£COS2 ####
             inFile <- input$fileACP
             data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
 
@@ -76,15 +89,30 @@ shinyServer(function(input, output,session) {
     grapheIndivi <- function(){ 
             req(input$fileACP) #ACP 
             inFile <- input$fileACP
-            data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
-            rowvar <- matrix(dat[,1]) #Récupération des noms 
-            rownames(dat) <- rowvar #Remplacement des ID créer par R par les noms 
-            data.active <- data[input$idInv:input$idInv2 , input$idActive:input$idActive2]
-            res.pca <- PCA(data.active, graph = FALSE)
-            fviz_pca_ind (res.pca, col.ind = "cos2", #Graphe des individus colorer
-                     gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
-                     repel = TRUE # Évite le chevauchement de texte
-                     )
+            dat <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
+
+            if (input$valeurG == TRUE){
+                rowvar <- matrix(dat[,1]) #Récupération des noms 
+                rownames(dat) <- rowvar #Remplacement des ID créer par R par les noms 
+                data.active <- dat[input$idInv:input$idInv2 , input$idActive:input$idActive2] #LES VALEURS ONT UN NOM ASSOCIE
+                print(data.active)
+                res.pca <- PCA(data.active, graph = FALSE)
+                fviz_pca_ind (res.pca, col.ind = "cos2", #Graphe des individus colorer
+                         gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+                         repel = TRUE # Évite le chevauchement de texte
+                         )
+            } else 
+            {
+                #rowvar <- matrix(dat[,1]) #Récupération des noms 
+                #rownames(dat) <- rowvar #Remplacement des ID créer par R par les noms   
+                data.active <- dat[input$idInv:input$idInv2 , input$idActive:input$idActive2] ### DANNS LE CAS DE NON NOM AU VALEURS
+                print(data.active)
+                res.pca <- PCA(data.active, graph = FALSE)
+                fviz_pca_ind (res.pca, col.ind = "cos2", #Graphe des individus colorer
+                         gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+                         repel = TRUE # Évite le chevauchement de texte
+                         )
+            }
     }       
         output$grapheIndivi.out <- renderPlot({ #test
         print(grapheIndivi())

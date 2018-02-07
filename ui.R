@@ -26,11 +26,13 @@ fluidPage(
                                         "text/comma-separated-values,text/plain",
                                         ".csv")),
                               #PLAGE DE DONNEE SAISIE PAR UTILISATEUR POUR ACP 
+                              checkboxInput("allFile", "Travailler avec tout le fichier", TRUE),
                               numericInput("idInv", "Coordonée Individu (Début valeur ligne)", 1, min = 1, max = 100),
                               numericInput("idInv2", "Coordonée Individu (Fin des valeur ligne:", 5, min = 1, max = 100),
                               numericInput("idActive", "Variable active (Début numéro colonne):", 1, min = 1, max = 100),
                               numericInput("idActive2", "variable active (Fin numéro colonne):", 5, min = 1, max = 100)),
 	                            tags$hr(),
+	                          mainPanel(
                               h3('Variance / Valeur Propre'),
                               verbatimTextOutput('var.out'),
                               br(),
@@ -53,7 +55,7 @@ fluidPage(
 							  checkboxInput("valeurG", "Valeur Individu", TRUE),
                               plotOutput('grapheIndivi.out'),
                               tableOutput('contentsACP'),
-	                            htmlOutput('outputACP')
+	                            htmlOutput('outputACP'))
                     	),
 
                         tabPanel(title = 'AFC',

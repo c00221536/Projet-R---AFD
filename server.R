@@ -50,7 +50,7 @@ shinyServer(function(input, output,session) {
         #eig.val <- get_eigenvalue(res.pca) #VALEUR PROPRE VARIANCE
         (fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))) #PLOT scree plot
     })  
-        output$screePlot <- renderPlot({
+        output$screePlot.out <- renderPlot({
         screePlo()
     })
 
@@ -69,7 +69,6 @@ shinyServer(function(input, output,session) {
         
     grapheRondCos <- function(){ 
         req(input$fileACP) #ACP 
-        ## AFFICHE MAUVAISE VALEUR PROBLEME AVEC VAR£COS2 ####
         inFile <- input$fileACP
         donnees <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
         donnees.active <- donnees[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 

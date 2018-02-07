@@ -15,25 +15,25 @@ fluidPage(
     tags$body(
         mainPanel(
             tabsetPanel(
-                tabPanel(title = 'ACP',
+                tabPanel(title = 'Analyse en Composante Principale',
                     sidebarPanel(
                         checkboxInput("header", "Header", TRUE),
     					radioButtons("sep", "Séparateur", choices = c(Virgule = ",", PointVirgule = ";",Tab = "\t"), selected = ","),
     					tags$hr(),
-                        fileInput("fileACP", "ACP", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
+                        fileInput("fileACP", "Analyse en Composante Principale", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
                                  
                             #PLAGE DE DONNEE SAISIE PAR UTILISATEUR POUR ACP 
                                   
                         checkboxInput("allFile", "Travailler avec tout le fichier", TRUE),
-                        numericInput("idInv", "Coordonée Individu (Début valeur ligne)", 1, min = 1, max = 100),
-                        numericInput("idInv2", "Coordonée Individu (Fin des valeur ligne:", 5, min = 1, max = 100),
+                        numericInput("idInv", "Coordonnée Individu (Début valeur ligne)", 1, min = 1, max = 100),
+                        numericInput("idInv2", "Coordonnée Individu (Fin des valeur ligne:", 5, min = 1, max = 100),
                         numericInput("idActive", "Variable active (Début numéro colonne):", 1, min = 1, max = 100),
-                        numericInput("idActive2", "variable active (Fin numéro colonne):", 5, min = 1, max = 100)
+                        numericInput("idActive2", "Variable active (Fin numéro colonne):", 5, min = 1, max = 100)
                     ),	           
                     tags$hr(),
     	                
                     mainPanel(
-                        h3('Variance / Valeur Propre'),
+                        h3('Valeurs propres / Variances'),
                         verbatimTextOutput('var.out'),
                         br(),
                             
@@ -41,15 +41,15 @@ fluidPage(
                         verbatimTextOutput('correl.out'),
                         br(),
                             
-                        h3('Graphe Plot'),
+                        h3('Graphique des variables'),
                         plotOutput('screePlot.out'),
                         br(),
                             
-                        h3('Varialbe PCA'),
+                        h3('Cercle de corrélation'),
                         plotOutput('varPCA.out'),
                         br(),
                             
-                        h3('Graphe rond cos2'),
+                        h3('Contributions des variables aux axes principaux'),
                         plotOutput('grapheCos2.out'),
                         br(),
                             
@@ -70,55 +70,55 @@ fluidPage(
                     )
                 ),
                     
-                tabPanel(title = 'AFC',
+                tabPanel(title = 'Analyse Factorielle des Correspondances',
                     sidebarPanel(
                         checkboxInput("Colonne", "Colonne", TRUE),
-    	                fileInput("fileAFC", "AFC", accept = c("text/csv","text/comma-separated-values,text/plain",".csv"))
+    	                fileInput("fileAFC", "Analyse Factorielle des Correspondances", accept = c("text/csv","text/comma-separated-values,text/plain",".csv"))
                     ),
     	            tags$hr(),
     	                             
     	            mainPanel(
-    					h3('Tableau des contigence'),
+    					h3('Graphique du tableaux de contingence'),
     	                plotOutput('afc1.out'),
                         br(),
     
-    					h3('Variance / Val Propre'),
+    					h3('Valeurs propres / Variances'),
     					verbatimTextOutput('varianceafc.out'),
     					br(),
     
-    					h3('Screen plo'),
+    					h3('Graphique des valeurs propres'),
     					plotOutput('screenPlotAFC.out'),
     					br(),
     
-    					h3('Biplot lignes et colonens'),
+    					h3('Biplot des lignes et des colonnes'),
     					plotOutput('biplotAFC.out'),
     					br(),
     
-    					h3('Coordonée'),
+    					h3('Coordonnées des points lignes'),
     					 verbatimTextOutput('coordoPointL.out'),
     					br(),
     
-    					h3('Graphe des points lignes'),
+    					h3('Graphique des points lignes'),
     					plotOutput('grapheCordoL.out'),
     					br(),
     
-    					h3('Qualié de la représentation cosinus²'),
+    					h3('Qualité de la représentation cos²'),
     					verbatimTextOutput('coordoCos.out'),
     					br(),
     
-    					h3('Graphe² des points lignes en fonction de leur cos²'),
+    					h3('Graphique des points lignes en fonction de leur cos²'),
     					plotOutput('coordoCosPlot.out'),
     					br(),
     
-    					h3('représentation des cosinus²'),
+    					h3('Représentation des cos² des points lignes'),
     					plotOutput('representationCos.out'), 
     					br(),
     
-    					h3('Graphe des contributions '),
+    					h3('Graphique des contributions '),
     					plotOutput('grapheContriCA.out'),
     					br(),
     
-    					h3('Graphe des points colonnes '),
+    					h3('Graphique des points colonnes '),
     					plotOutput('graphePointColCA.out'),
     					br(),
     					
@@ -130,10 +130,10 @@ fluidPage(
     	                             )
                                  ),
     
-                tabPanel(title = 'CAH',
+                tabPanel(title = 'Classification Ascendante Hiérarchique',
                     sidebarPanel(
                         checkboxInput("texteCAH", "Texte", TRUE),
-                        fileInput("fileCAH", "CAH",accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
+                        fileInput("fileCAH", "Classification Ascendante Hiérarchique",accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
                         sliderInput("nbCluster",label = "Sélectionner le nombre de Cluster souhaité",value = 4, min = 2, max = 10)
                     ),
                     tags$hr(),
@@ -147,9 +147,9 @@ fluidPage(
                  	)
                 ),
                             
-                tabPanel(title = 'Kmean',
+                tabPanel(title = 'K-Mean',
                     sidebarPanel(
-                        fileInput("fileK", "K",accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),         		
+                        fileInput("fileK", "K-Mean",accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),         		
     		            tags$h3("Sélectionner les paramètres"),
     		            checkboxInput(inputId = 'headerK', label = 'Header', value = FALSE),
     		            #checkboxInput(inputId = "stringAsFactorsK", "stringAsFactors", FALSE),

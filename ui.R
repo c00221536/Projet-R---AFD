@@ -17,11 +17,10 @@ fluidPage(
             tabsetPanel(
                 tabPanel(title = 'ACP',
                     sidebarPanel(
-                        checkboxInput("header", "Header", TRUE),
-    					radioButtons("sep", "Séparateur", choices = c(Virgule = ",", PointVirgule = ";",Tab = "\t"), selected = ","),
+						fileInput("fileACP", "Ajouter votre fichier CSV", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
     					tags$hr(),
-                        fileInput("fileACP", "ACP", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
-                                 
+                        checkboxInput("header", "Header", TRUE),
+    					radioButtons("sep", "Séparateur", choices = c(Virgule=',',PointVirgule=';',Tab='\t', Espace=''), selected = ","),      
                             #PLAGE DE DONNEE SAISIE PAR UTILISATEUR POUR ACP 
                                   
                         checkboxInput("allFile", "Travailler avec tout le fichier", TRUE),
@@ -73,7 +72,7 @@ fluidPage(
                 tabPanel(title = 'AFC',
                     sidebarPanel(
                         checkboxInput("Colonne", "Colonne", TRUE),
-    	                fileInput("fileAFC", "AFC", accept = c("text/csv","text/comma-separated-values,text/plain",".csv"))
+    	                fileInput("fileAFC", "Ajouter votre fichier CSV", accept = c("text/csv","text/comma-separated-values,text/plain",".csv"))
                     ),
     	            tags$hr(),
     	                             
@@ -133,7 +132,7 @@ fluidPage(
                 tabPanel(title = 'CAH',
                     sidebarPanel(
                         checkboxInput("texteCAH", "Texte", TRUE),
-                        fileInput("fileCAH", "CAH",accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
+                        fileInput("fileCAH", "Ajouter votre fichier CSV",accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
                         sliderInput("nbCluster",label = "Sélectionner le nombre de Cluster souhaité",value = 4, min = 2, max = 10)
                     ),
                     tags$hr(),
@@ -149,12 +148,12 @@ fluidPage(
                             
                 tabPanel(title = 'Kmean',
                     sidebarPanel(
-                        fileInput("fileK", "K",accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),         		
+                        fileInput("fileK", "Ajouter votre fichier CSV",accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),         		
     		            tags$h3("Sélectionner les paramètres"),
     		            checkboxInput(inputId = 'headerK', label = 'Header', value = FALSE),
     		            #checkboxInput(inputId = "stringAsFactorsK", "stringAsFactors", FALSE),
     		            radioButtons(inputId = 'sepK', label = 'Séparateur', choices = c(Virgule=',',PointVirgule=';',Tab='\t', Espace=''), selected = ','),
-    		            numericInput('clusters', 'Cluster count', 3,min = 1, max = 9),
+						sliderInput("clusters",label = "Sélectionner le nombre de Cluster souhaité",value = 4, min = 1, max = 10),
                         tags$hr(),         
                         uiOutput("list_item1"), #SelectInput interactif
     		            uiOutput("list_item2")  #Idem

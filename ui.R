@@ -56,7 +56,7 @@ fluidPage(
                         plotOutput('CercleCos2.out'),
                         br(),
                             
-                        h3('Graphe invidualité'),
+                        h3(' Graphe individualité'),
     					checkboxInput("valeurG", "Valeur Individu", TRUE),
                         plotOutput('grapheIndivi.out'),
     
@@ -71,7 +71,7 @@ fluidPage(
                     
                 tabPanel(title = 'Analyse Factorielle des Correspondances',
                     sidebarPanel(
-                        checkboxInput("Colonne", "Colonne", TRUE),
+                        #checkboxInput("Colonne", "Colonne", TRUE),
     	                fileInput("fileAFC", "Ajouter votre fichier CSV", accept = c("text/csv","text/comma-separated-values,text/plain",".csv"))
 
                     ),

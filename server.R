@@ -311,34 +311,28 @@ tab <- reactive({
         dat <- read.csv(inFile$datapath, header= TRUE,sep=";", stringsAsFactors = FALSE, fileEncoding = "UTF-8-BOM")
 
         rowvar <- matrix(dat[,1]) #Récupération des noms en colonne 1  
-        # A FIXER COLONNE X EN TROP OU COLONNE ID 
         rownames(dat) <- rowvar #Remplacement des ID créer par R par les noms 
-        #print(dat)
 
         #Convertion données en tab
         dt <- as.table(as.matrix(dat))
-        dat[1] <-NULL
         #Graph
         balloonplot(t(dt), main = "Graphique du tableau de contigence", xlab ="", ylab = "",
             label = FALSE, show.margins = FALSE)
 	})
         output$afc1.out <- renderPlot({
         tab()
+
     })
 
 varianceAFC <- reactive({
         req(input$fileAFC)
-        if (input$Colonne == TRUE) {
             inFile <- input$fileAFC #Récupération du fichier
             dat <- read.csv(inFile$datapath, header= TRUE,sep=";", fileEncoding = "UTF-8-BOM")
-            dat[1] <- NULL
+            dat[1] <- NULL #
             res.ca <- CA (dat, graph = FALSE)
 
             eig.val <- get_eigenvalue (res.ca)
             print(eig.val)
-            } else {
-                print('rolo')
-            }
     })
         output$varianceafc.out <- renderPrint({
         varianceAFC()
@@ -357,7 +351,6 @@ screenPlotAFC <- reactive({
     })        
 biplotAFC <- reactive({
         req(input$fileAFC)
-        if (input$Colonne == TRUE) {
             inFile <- input$fileAFC #Récupération du fichier
             dat <- read.csv(inFile$datapath, header= TRUE,sep=";", fileEncoding = "UTF-8-BOM")
             rowvar <- matrix(dat[,1]) #Récupération des noms en colonne 1  
@@ -365,14 +358,12 @@ biplotAFC <- reactive({
             dat[1] <- NULL
             res.ca <- CA (dat, graph = FALSE)
             fviz_ca_biplot (res.ca, repel = TRUE)
-        }
     })
         output$biplotAFC.out <- renderPlot({
         biplotAFC()
     }) 
 coordoPointL <- reactive({
         req(input$fileAFC)
-        if (input$Colonne == TRUE) {
             inFile <- input$fileAFC #Récupération du fichier
             dat <- read.csv(inFile$datapath, header= TRUE,sep=";", fileEncoding = "UTF-8-BOM")
             rowvar <- matrix(dat[,1]) #Récupération des noms en colonne 1  
@@ -382,14 +373,12 @@ coordoPointL <- reactive({
             res.ca <- CA (dat, graph = FALSE)
             row <- get_ca_row(res.ca)
             print(row$coord)
-        }
     })
         output$coordoPointL.out <- renderPrint({
         coordoPointL()
     })
 grapheCordoL <- reactive({
         req(input$fileAFC)
-        if (input$Colonne == TRUE) {
             inFile <- input$fileAFC #Récupération du fichier
             dat <- read.csv(inFile$datapath, header= TRUE,sep=";", fileEncoding = "UTF-8-BOM")
             rowvar <- matrix(dat[,1]) #Récupération des noms en colonne 1  
@@ -398,14 +387,12 @@ grapheCordoL <- reactive({
 
             res.ca <- CA (dat, graph = FALSE)
             fviz_ca_row(res.ca, repel = TRUE)
-        }
     })
         output$grapheCordoL.out <- renderPlot({
         grapheCordoL()
     })  
 coordoCos <- reactive({
         req(input$fileAFC)
-        if (input$Colonne == TRUE) {
             inFile <- input$fileAFC #Récupération du fichier
             dat <- read.csv(inFile$datapath, header= TRUE,sep=";", fileEncoding = "UTF-8-BOM")
             rowvar <- matrix(dat[,1]) #Récupération des noms en colonne 1  
@@ -415,14 +402,12 @@ coordoCos <- reactive({
             res.ca <- CA (dat, graph = FALSE)
             row <- get_ca_row(res.ca)
             print(row$cos2)
-        }
     })
         output$coordoCos.out <- renderPrint({
         coordoCos()
     })
 coordoCosPlot <- reactive({
         req(input$fileAFC)
-        if (input$Colonne == TRUE) {
             inFile <- input$fileAFC #Récupération du fichier
             dat <- read.csv(inFile$datapath, header= TRUE,sep=";", fileEncoding = "UTF-8-BOM")
             rowvar <- matrix(dat[,1]) #Récupération des noms en colonne 1  
@@ -433,14 +418,13 @@ coordoCosPlot <- reactive({
             fviz_ca_row (res.ca, col.row = "cos2",
                          gradient.cols = c ("#00AFBB", "#E7B800", "#FC4E07"),
                          repel = TRUE)
-        }
+
     })
         output$coordoCosPlot.out <- renderPlot({
         coordoCosPlot()
     })  
 representationCos <- reactive({
         req(input$fileAFC)
-        if (input$Colonne == TRUE) {
             inFile <- input$fileAFC #Récupération du fichier
             dat <- read.csv(inFile$datapath, header= TRUE,sep=";", fileEncoding = "UTF-8-BOM")
             rowvar <- matrix(dat[,1]) #Récupération des noms en colonne 1  
@@ -450,14 +434,12 @@ representationCos <- reactive({
             res.ca <- CA (dat, graph = FALSE)
             row <- get_ca_row(res.ca)
             corrplot(row$cos2, is.corr = FALSE)
-        }
     })
         output$representationCos.out <- renderPlot({
         representationCos()
     })  
 grapheContriCA <- reactive({
         req(input$fileAFC)
-        if (input$Colonne == TRUE) {
             inFile <- input$fileAFC #Récupération du fichier
             dat <- read.csv(inFile$datapath, header= TRUE,sep=";", fileEncoding = "UTF-8-BOM")
             rowvar <- matrix(dat[,1]) #Récupération des noms en colonne 1  
@@ -469,14 +451,12 @@ grapheContriCA <- reactive({
             fviz_ca_row (res.ca, col.row = "contrib",
                          gradient.cols = c ("#00AFBB", "#E7B800", "#FC4E07"),
                          repel = TRUE)
-        }
     }) 
         output$grapheContriCA.out <- renderPlot({
         grapheContriCA()
     })  
 graphePointColCA <- reactive({
         req(input$fileAFC)
-        if (input$Colonne == TRUE) {
             inFile <- input$fileAFC #Récupération du fichier
             dat <- read.csv(inFile$datapath, header= TRUE,sep=";", fileEncoding = "UTF-8-BOM")
             rowvar <- matrix(dat[,1]) #Récupération des noms en colonne 1  
@@ -488,14 +468,12 @@ graphePointColCA <- reactive({
             fviz_ca_col (res.ca, col.col = "cos2",
              gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
              repel = TRUE)
-        }
     })
         output$graphePointColCA.out <- renderPlot({
         graphePointColCA()
     })  
 biplotContribution <- reactive({
         req(input$fileAFC)
-        if (input$Colonne == TRUE) {
             inFile <- input$fileAFC #Récupération du fichier
             dat <- read.csv(inFile$datapath, header= TRUE,sep=";", fileEncoding = "UTF-8-BOM")
             rowvar <- matrix(dat[,1]) #Récupération des noms en colonne 1  
@@ -506,7 +484,7 @@ biplotContribution <- reactive({
             row <- get_ca_row(res.ca)
             fviz_ca_biplot (res.ca, map = "colgreen", arrow = c (TRUE, FALSE),
                repel = TRUE)
-        }
+        
     })
         output$biplotContribution.out <- renderPlot({
         biplotContribution()

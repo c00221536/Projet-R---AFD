@@ -1,8 +1,15 @@
 library(shiny)
-library(shinyAce)
+library(factoextra)
 library(gplots)
+library(FactoMineR)
+library(corrplot)
+
+#Auteur Antoine ANGOULVANT 
+#Auteur David LUONG 
+#Etudiant en M1 MIAGE - Polytech Lyon 
 
 fluidPage(
+	#Ajout d'un header à l'aide d'un CSS
     tags$header(
         tags$img(height = 122, width = 140, src = "polytech.png",align="left"),
         tags$img(height = 108, width = 150, src = "lyon1.png",align="right"),
@@ -17,13 +24,14 @@ fluidPage(
             tabsetPanel(
                 tabPanel(title = 'Analyse en Composante Principale',
                     sidebarPanel(
+                    	#Configuration utilisateur
 						fileInput("fileACP", "Ajouter votre fichier CSV", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
     					tags$hr(),
                         checkboxInput("header", "Header", TRUE),
     					radioButtons("sep", "Séparateur", choices = c(Virgule=',',PointVirgule=';',Tab='\t', Espace=''), selected = ","),      
-                            #PLAGE DE DONNEE SAISIE PAR UTILISATEUR POUR ACP 
-                                  
+                            
                         checkboxInput("allFile", "Travailler avec tout le fichier", TRUE),
+                        #PLAGE DE DONNEE SAISIE PAR UTILISATEUR POUR ACP 
                         numericInput("idInv", "Coordonnée Individu (Début valeur ligne)", 1, min = 1, max = 100),
                         numericInput("idInv2", "Coordonnée Individu (Fin des valeur ligne:", 5, min = 1, max = 100),
                         numericInput("idActive", "Variable active (Début numéro colonne):", 1, min = 1, max = 100),
@@ -32,6 +40,7 @@ fluidPage(
                     tags$hr(),
     	                
                     mainPanel(
+                    	#Information concernant l'Acp
                         h3('Valeurs propres / Variances'),
                         verbatimTextOutput('var.out'),
                         br(),
@@ -75,6 +84,7 @@ fluidPage(
                     
                 tabPanel(title = 'Analyse Factorielle des Correspondances',
                     sidebarPanel(
+                    	#Configuration Utilisateur
                         #checkboxInput("Colonne", "Colonne", TRUE),
     	                fileInput("fileAFC", "Ajouter votre fichier CSV", accept = c("text/csv","text/comma-separated-values,text/plain",".csv"))
 
@@ -82,6 +92,7 @@ fluidPage(
     	            tags$hr(),
     	                             
     	            mainPanel(
+    	            	#Information concernant l'AFC
     					h3('Graphique du tableaux de contingence'),
     	                plotOutput('afc1.out'),
                         br(),
@@ -144,6 +155,7 @@ fluidPage(
     
                 tabPanel(title = 'Classification Ascendante Hiérarchique',
                     sidebarPanel(
+                    	#Configuration utilisateur
                         checkboxInput("texteCAH", "Texte", TRUE),
                         fileInput("fileCAH", "Ajouter votre fichier CSV",accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
                         sliderInput("nbCluster",label = "Sélectionner le nombre de Cluster souhaité",value = 4, min = 2, max = 10)
@@ -151,6 +163,7 @@ fluidPage(
                     tags$hr(),
     
                     mainPanel(
+                    	#Information concernant l'AFC
                         h3('Diagramme Ward '),
                         plotOutput('cah.out',height = "1000px"), #width="1500px"),
     		            tags$hr(),
@@ -161,6 +174,7 @@ fluidPage(
                             
                 tabPanel(title = 'K-Mean',
                     sidebarPanel(
+                    	#Configuration utilisateur
                         fileInput("fileK", "Ajouter votre fichier CSV",accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),         		
     		            tags$h3("Sélectionner les paramètres"),
     		            checkboxInput(inputId = 'headerK', label = 'Header', value = FALSE),
@@ -172,7 +186,7 @@ fluidPage(
     		            uiOutput("list_item2")  #Idem
                 	),
                    	tags$hr(),
-            
+            		#Graphe KMeans
             		mainPanel(plotOutput('kmeanGraphe')) #Output graphe 
                 )
             )

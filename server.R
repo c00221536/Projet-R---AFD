@@ -136,7 +136,28 @@ shinyServer(function(input, output,session) {
         output$CercleCos2.out <- renderPlot({
         print(cercleColorCos())
     })
-        
+
+    varcontriD <- function(){ 
+            req(input$fileACP) #ACP 
+            inFile <- input$fileACP
+            data <- read.csv(inFile$datapath, header= input$header,sep=input$sep, fileEncoding = "UTF-8-BOM")
+                #Vérification si User souhaite travailler sur tout le fichier
+                if(input$allFile == TRUE) 
+                {
+                    data.active <- data[,]
+                } else 
+                {
+                    data.active <- data[input$idInv:input$idInv2 , input$idActive:input$idActive2] #AJOUTER VALEUR DES INPUTS 
+                }
+
+            res.pca <- PCA(data.active, graph = FALSE) #Réceup des valeurs ACP 
+			var <- get_pca_var(res.pca)
+			corrplot(var$contrib, is.corr=FALSE)  
+    }       
+        output$varcontriD.out <- renderPlot({
+        print(varcontriD())
+    })
+
     grapheIndivi <- function(){ 
         req(input$fileACP) #ACP 
         inFile <- input$fileACP
@@ -177,7 +198,7 @@ shinyServer(function(input, output,session) {
             }
     }       
         output$grapheIndivi.out <- renderPlot({ #test
-        print(grapheIndivi())
+        print(grapheIndivi()) 
     })
 
 
@@ -377,7 +398,7 @@ coordoPointL <- reactive({
         output$coordoPointL.out <- renderPrint({
         coordoPointL()
     })
-grapheCordoL <- reactive({
+grapheCordoL <- reactive({ #POINTS LIGNES
         req(input$fileAFC)
             inFile <- input$fileAFC #Récupération du fichier
             dat <- read.csv(inFile$datapath, header= TRUE,sep=";", fileEncoding = "UTF-8-BOM")
@@ -391,6 +412,37 @@ grapheCordoL <- reactive({
         output$grapheCordoL.out <- renderPlot({
         grapheCordoL()
     })  
+graphePointColCA <- reactive({
+        req(input$fileAFC)
+            inFile <- input$fileAFC #Récupération du fichier
+            dat <- read.csv(inFile$datapath, header= TRUE,sep=";", fileEncoding = "UTF-8-BOM")
+            rowvar <- matrix(dat[,1]) #Récupération des noms en colonne 1  
+            rownames(dat) <- rowvar #Remplacement des ID créer par R par les noms 
+            dat[1] <- NULL
+
+            res.ca <- CA (dat, graph = FALSE)
+            row <- get_ca_row(res.ca)
+            fviz_ca_col (res.ca, col.col = "cos2",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE)
+    })
+        output$graphePointColCA.out <- renderPlot({
+        graphePointColCA()
+    })  
+graphePointColC <- reactive({ #POINTS COLONNES
+        req(input$fileAFC)
+            inFile <- input$fileAFC #Récupération du fichier
+            dat <- read.csv(inFile$datapath, header= TRUE,sep=";", fileEncoding = "UTF-8-BOM")
+            rowvar <- matrix(dat[,1]) #Récupération des noms en colonne 1  
+            rownames(dat) <- rowvar #Remplacement des ID créer par R par les noms 
+            dat[1] <- NULL
+
+			col <- get_ca_col(res.ca)
+			print(col$coord)
+    })
+        output$coordoPointC.out <- renderPrint({
+        graphePointColC()
+    })
 coordoCos <- reactive({
         req(input$fileAFC)
             inFile <- input$fileAFC #Récupération du fichier
@@ -455,7 +507,8 @@ grapheContriCA <- reactive({
         output$grapheContriCA.out <- renderPlot({
         grapheContriCA()
     })  
-graphePointColCA <- reactive({
+
+grapheContriLigneDim <- reactive({
         req(input$fileAFC)
             inFile <- input$fileAFC #Récupération du fichier
             dat <- read.csv(inFile$datapath, header= TRUE,sep=";", fileEncoding = "UTF-8-BOM")
@@ -465,13 +518,14 @@ graphePointColCA <- reactive({
 
             res.ca <- CA (dat, graph = FALSE)
             row <- get_ca_row(res.ca)
-            fviz_ca_col (res.ca, col.col = "cos2",
-             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
-             repel = TRUE)
-    })
-        output$graphePointColCA.out <- renderPlot({
-        graphePointColCA()
+			corrplot(row$contrib, is.corr=FALSE)    
+    }) 
+        output$grapheContriLigneDim.out <- renderPlot({
+        grapheContriLigneDim()
     })  
+
+
+
 biplotContribution <- reactive({
         req(input$fileAFC)
             inFile <- input$fileAFC #Récupération du fichier

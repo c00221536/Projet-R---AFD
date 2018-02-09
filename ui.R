@@ -55,7 +55,11 @@ fluidPage(
                         h3('Coloration de cercle en fonction de Cos2'),
                         plotOutput('CercleCos2.out'),
                         br(),
-                            
+
+                        h3('Variable les plus contributives par dimensions'),
+                        plotOutput('varcontriD.out'),
+                        br(),
+
                         h3(' Graphe individualité'),
     					checkboxInput("valeurG", "Valeur Individu", TRUE),
                         plotOutput('grapheIndivi.out'),
@@ -101,6 +105,14 @@ fluidPage(
     					h3('Graphique des points lignes'),
     					plotOutput('grapheCordoL.out'),
     					br(),
+
+    					h3('Coordonnées des points colonnes'),
+    					verbatimTextOutput('coordoPointC.out'),
+    					br(),
+
+    					h3('Graphique des points colonnes '),
+    					plotOutput('graphePointColCA.out'),
+    					br(),
     
     					h3('Qualité de la représentation cos²'),
     					verbatimTextOutput('coordoCos.out'),
@@ -108,18 +120,18 @@ fluidPage(
     
     					h3('Graphique des points lignes en fonction de leur cos²'),
     					plotOutput('coordoCosPlot.out'),
-    					br(),
+    					br(), 
     
     					h3('Représentation des cos² des points lignes'),
     					plotOutput('representationCos.out'), 
     					br(),
-    
+
+    					h3('Graphique des contributions des lignes par dimensions '),
+    					plotOutput('grapheContriLigneDim.out'),
+    					br(),
+
     					h3('Graphique des contributions '),
     					plotOutput('grapheContriCA.out'),
-    					br(),
-    
-    					h3('Graphique des points colonnes '),
-    					plotOutput('graphePointColCA.out'),
     					br(),
     					
     					h3('Biplot des contributions'),

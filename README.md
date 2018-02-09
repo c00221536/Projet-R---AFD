@@ -10,11 +10,9 @@ Cette application permet de calculer et d'afficher le résultat des méthodes su
 
 Pour éxécuter l'application il est nécessaire d'installer les packages suivants :
 - shiny
-- shinyAce
-- psych
 - factoextra
 - gplots
 - FactoMineR
 - corrplot
 
-Rappel : >install.packages("shiny","shinyAce","psych","factoextra","gplots","FactoMineR","corrplot")
+Rappel : >install.packages("shiny","factoextra","gplots","FactoMineR","corrplot")
